@@ -53,7 +53,6 @@ export default function SiteNavbar(){
               <Nav.Link as={Link} to="/" active={pathname==='/' }>Home</Nav.Link>
               <Nav.Link as={Link} to="/chi-siamo" active={pathname==='/chi-siamo'}>Chi siamo</Nav.Link>
               <Nav.Link as={Link} to="/calendario" active={pathname==='/calendario'}>Programmazione</Nav.Link>
-              <Nav.Link as={Link} to="/foto" active={pathname==='/foto'}>Foto</Nav.Link>
               <Nav.Link as={Link} to="/video" active={pathname==='/video'}>Video</Nav.Link>
               <Nav.Link as={Link} to="/contatti" active={pathname==='/contatti'}>Contatti</Nav.Link>
             </Nav>

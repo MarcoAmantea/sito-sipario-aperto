@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   FiCalendar,
   FiMapPin,
-  FiClock,
   FiExternalLink,
   FiPlay,
 } from "react-icons/fi";
@@ -121,31 +120,7 @@ function KineticTitle({ text }) {
   );
 }
 
-function ParallaxLayer({ depth = 10, children }) {
-  const ref = useRef(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const onMove = (e) => {
-      const { innerWidth: w, innerHeight: h } = window;
-      const dx = (e.clientX - w / 2) / w;
-      const dy = (e.clientY - h / 2) / h;
-      el.style.transform = `translate(${dx * depth * 8}px, ${
-        dy * depth * 8
-      }px)`;
-    };
-    window.addEventListener("pointermove", onMove);
-    return () => window.removeEventListener("pointermove", onMove);
-  }, [depth]);
-  return (
-    <div
-      ref={ref}
-      style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
-    >
-      {children}
-    </div>
-  );
-}
+
 
 function TiltCard({ children }) {
   const ref = useRef(null);
@@ -177,9 +152,10 @@ export default function Home() {
         title: "Le voci di dentro",
         excerpt: "Il capolavoro di De Filippo...",
         whenISO: "2025-10-03T20:45:00+02:00",
+        monthLabel: "Ottobre", // <<< mostra solo il mese
         venue: "Teatro La Locandina",
         city: "Pagani (SA)",
-        status: "Debutto",
+        status: "In Scena",
         poster: "/dentro.jpg",
         link: "/spettacoli/le-voci-di-dentro",
       },
@@ -187,16 +163,18 @@ export default function Home() {
         title: "Il medico dei pazzi",
         excerpt: "La celebre commedia di Scarpetta...",
         whenISO: "2025-12-06T21:00:00+01:00",
+        monthLabel: "Dicembre", // <<< solo mese
         venue: "Teatro La Locandina",
         city: "Pagani (SA)",
         status: "In programmazione",
-        poster: "/pazzi.jpg",
+        poster: "/pazzi.jpeg",
         link: "/spettacoli/il-medico-dei-pazzi",
       },
       {
         title: "Romeo e Giulietta",
         excerpt: "Il dramma senza tempo di Shakespeare...",
         whenISO: "2026-02-07T21:00:00+01:00",
+        monthLabel: "Febbraio", // <<< solo mese
         venue: "Teatro La Locandina",
         city: "Pagani (SA)",
         status: "In programmazione",
@@ -208,19 +186,88 @@ export default function Home() {
   );
 
   const quotes = [
-    {
-      text: "Il teatro dove la magia incontra l'anima.",
-      author: "Sipario Aperto",
-    },
-    {
-      text: "La scena si illumina quando il pubblico trattiene il respiro.",
-      author: "Critica di Spettacolo",
-    },
-    {
-      text: "Passione, mestiere, territorio: la compagnia che emoziona.",
-      author: "Spettatore",
-    },
-  ];
+  {
+    text: "Il teatro dove la magia incontra l'anima.",
+    author: "Sipario Aperto",
+  },
+  {
+    text: "La scena si illumina quando il pubblico trattiene il respiro.",
+    author: "Critica di Spettacolo",
+  },
+  {
+    text: "Passione, mestiere, territorio: la compagnia che emoziona.",
+    author: "Spettatore",
+  },
+  {
+    text: "Una serata di risate genuine e cuore napoletano: indimenticabile.",
+    author: "Spettatore entusiasta",
+  },
+  {
+    text: "Ogni battuta è un tuffo nelle radici della nostra tradizione, con una freschezza che conquista.",
+    author: "Appassionato di commedie",
+  },
+  {
+    text: "La tragedia annuale è un pugno nell’anima, recitata con una forza e una verità che commuovono.",
+    author: "Amante del dramma",
+  },
+  {
+    text: "Il ritmo comico e l’energia degli attori mi hanno fatto dimenticare il tempo.",
+    author: "Spettatore rapito",
+  },
+  {
+    text: "Un viaggio a Napoli senza muoversi da Pagani: profumi, colori e risate di casa.",
+    author: "Fan della tradizione",
+  },
+  {
+    text: "La loro tragedia è poesia in movimento, intensità pura che resta nel cuore.",
+    author: "Critico locale",
+  },
+  {
+    text: "Comicità raffinata e spontanea, capace di far ridere e riflettere nello stesso momento.",
+    author: "Spettatore affezionato",
+  },
+  {
+    text: "Quando cala il sipario resta la sensazione di aver vissuto un pezzo di Napoli autentica.",
+    author: "Ospite della serata",
+  },
+  {
+    text: "Bravura, ritmo, cuore: questa compagnia sa come rapire il pubblico dalla prima battuta.",
+    author: "Amico del teatro",
+  },
+  {
+    text: "Una tempesta di emozioni: dalle risate fragorose alle lacrime sincere.",
+    author: "Teatrofilo anonimo",
+  },
+  {
+    text: "Ogni spettacolo è una festa di dialetti, musica e calore partenopeo.",
+    author: "Spettatrice felice",
+  },
+  {
+    text: "La tragedia annuale è il loro diamante: intensità e arte allo stato puro.",
+    author: "Appassionata di classici",
+  },
+  {
+    text: "Recitazione brillante e scenografie curate: un’esperienza che resta nella memoria.",
+    author: "Visitatore entusiasta",
+  },
+  {
+    text: "Ogni risata è un abbraccio, ogni lacrima una carezza: teatro che nutre l’anima.",
+    author: "Cuore di spettatore",
+  },
+  {
+    text: "Quando il sipario si apre, Napoli entra in sala con tutta la sua magia.",
+    author: "Fan devoto",
+  },
+  {
+    text: "Commedie che scaldano, tragedie che scuotono: una compagnia che sa fare tutto.",
+    author: "Critico appassionato",
+  },
+  {
+    text: "Ridere, piangere, sognare: in poche ore ti fanno vivere una vita intera.",
+    author: "Spettatore incantato",
+  },
+];
+
   const [qIndex, setQIndex] = useState(0);
   useEffect(() => {
     const id = setInterval(
@@ -281,7 +328,6 @@ export default function Home() {
       >
         {/* strati parallax */}
         <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
-          <ParallaxLayer depth={6}>
             <video
               className="d-none d-md-block w-100 h-100"
               style={{
@@ -311,10 +357,7 @@ export default function Home() {
                   "https://picsum.photos/1920/1080?random=80")
               }
             />
-          </ParallaxLayer>
-          <ParallaxLayer depth={12}>
             <OrbField />
-          </ParallaxLayer>
           <div
             style={{
               position: "absolute",
@@ -407,7 +450,7 @@ export default function Home() {
                 <FaInstagram />
               </SocialBtn>
               <SocialBtn
-                href="https://l.instagram.com/?u=https%3A%2F%2Fyoutube.com%2F%40sipario_aperto%3Ffbclid%3DPAZXh0bgNhZW0CMTEAAacNRW_y3NZe9QSvMGii-BYk7k-5tWx05-g4dGHBLso7bO6FnGgz-QeH99-Lew_aem_59O2crR6-dBFcWyQwCWTiA&e=AT2FweLbufVD6-8-3L6TnE11Gqamq41e6IoB4TUXMeOrkRqtvxcfxYUpqsYgCUWnOAyqqVolEFTfecrivJFKTbNtjJCyPaY5ogXExtJfDg"
+                href="https://www.youtube.com/@sipario_aperto"
                 label="YouTube"
               >
                 <FaYoutube />
@@ -497,7 +540,7 @@ export default function Home() {
                   style={{ border: "1px solid rgba(255,255,255,.15)" }}
                 >
                   <img
-                    src="/chi.jpg"
+                    src="/compagnia.jpg"
                     alt="La compagnia in scena"
                     className="w-100 h-100"
                     style={{ objectFit: "cover" }}
@@ -508,10 +551,7 @@ export default function Home() {
                   />
                 </div>
               </TiltCard>
-              <div className="mt-2 text-light" style={{ opacity: 0.8 }}>
-                Più di <strong>80</strong> serate/anno • <strong>3</strong>{" "}
-                produzioni originali
-              </div>
+              
             </Col>
           </Row>
         </Container>
@@ -544,15 +584,20 @@ export default function Home() {
           </div>
           <Row>
             {events.map((ev, i) => {
-              const { date, time } = formatDT(ev.whenISO);
+              // Mostriamo SOLO il mese (nessun giorno/ora)
+              const monthOnly = ev.monthLabel
+                ? ev.monthLabel
+                : new Intl.DateTimeFormat("it-IT", { month: "long" }).format(
+                    new Date(ev.whenISO)
+                  );
               const variant =
-                ev.status === "Debutto"
+                ev.status === "In programmazione"
                   ? "warning"
                   : ev.status === "Anteprima"
                   ? "info"
                   : "success";
               return (
-                <Col xs={12} sm={6} lg={3} className="mb-3" key={i}>
+                <Col xs={12} sm={6} lg={4} className="mb-3" key={i}>
                   <TiltCard>
                     <Card
                       className="h-100 shadow-sm"
@@ -589,11 +634,9 @@ export default function Home() {
                           {ev.excerpt}
                         </Card.Text>
                         <div className="d-flex align-items-center gap-2 small mb-1">
-                          <FiCalendar /> <small>{date}</small>
+                          <FiCalendar /> <small>Nel mese di {monthOnly}</small>
                         </div>
-                        <div className="d-flex align-items-center gap-2 small mb-1">
-                          <FiClock /> <small>{time}</small>
-                        </div>
+                        {/* NIENTE orario: riga rimossa come da richiesta */}
                         <div className="d-flex align-items-center gap-2 small mb-3">
                           <FiMapPin />{" "}
                           <small>
@@ -631,7 +674,7 @@ export default function Home() {
       <motion.div
         initial={{ x: 0 }}
         animate={{ x: "-50%" }}
-        transition={{ repeat: Infinity, duration: 24, ease: "linear" }}
+        transition={{ repeat: Infinity, duration: 90, ease: "linear" }}
         className="marquee-track"
       >
         {[...quotes, ...quotes].map((q, idx) => (
@@ -662,7 +705,7 @@ export default function Home() {
                   fontSize: "clamp(1.6rem,2.6vw,2.2rem)",
                 }}
               >
-                Unisciti al nostro canale WhatsApp
+                Unisciti al nostro gruppo WhatsApp
               </h2>
               <p className="text-light" style={{ opacity: 0.9, maxWidth: 720 }}>
                 Niente newsletter: ti aggiorniamo direttamente sul nostro canale
@@ -679,19 +722,23 @@ export default function Home() {
                   Apri Gruppo WhatsApp
                 </a>
                 <Button
-                  variant="outline-light"
-                  size="lg"
-                  onClick={() => scrollToId("contatti")}
-                >
-                  Contattaci
-                </Button>
+  as="a"
+  href="/contatti"
+  variant="outline-light"
+  size="lg"
+>
+  Contattaci
+</Button>
+
               </div>
               <div
                 className="text-light mt-2"
                 style={{ opacity: 0.8, fontSize: 14 }}
               >
-                È gratuito e anonimo: nessuno vede il tuo numero, solo tu ricevi
-                gli aggiornamenti.
+                
+
+📢 Segui il nostro gruppo ufficiale su WhatsApp per ricevere notizie e anteprime.
+
               </div>
             </Col>
             <Col lg={6} className="text-center">
@@ -705,12 +752,12 @@ export default function Home() {
                 }}
               >
                 <img
-                  src="/images/whatsapp-channel-qr.png"
+                  src="/qr.jpg"
                   alt="QR per unirti al canale WhatsApp"
                   style={{
-                    maxWidth: "92%",
-                    maxHeight: "92%",
-                    objectFit: "contain",
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    objectFit: "cover",
                   }}
                   onError={(e) => (e.currentTarget.src = "/qr.jpg")}
                 />

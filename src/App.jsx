@@ -5,7 +5,6 @@ import Home from './pages/Home'
 import About from './pages/About'
 import Calendar from './pages/Calendar'
 import Contact from './pages/Contact'
-import Foto from "./pages/Foto"
 import Video from "./pages/Video"
 
 export default function App(){
@@ -18,7 +17,6 @@ export default function App(){
           <Route path="/chi-siamo" element={<About />} />
           <Route path="/calendario" element={<Calendar />} />
           <Route path="/contatti" element={<Contact />} />
-                    <Route path="/foto" element={<Foto />} />
           <Route path="/video" element={<Video />} />
 
         </Routes>

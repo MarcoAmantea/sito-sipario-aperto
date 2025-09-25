@@ -6,7 +6,7 @@ export default function EventCard({ ev, i }){
   const d = new Date(ev.whenISO)
   const date = new Intl.DateTimeFormat('it-IT',{day:'2-digit',month:'long',year:'numeric'}).format(d)
   const time = new Intl.DateTimeFormat('it-IT',{hour:'2-digit',minute:'2-digit'}).format(d)
-  const statusVariant = ev.status==='Debutto' ? 'warning' : ev.status==='Anteprima' ? 'info' : 'success'
+  const statusVariant = ev.status==='In Scena' ? 'warning' : ev.status==='Anteprima' ? 'info' : 'success'
 
   return (
     <motion.div whileHover={{scale:1.02}}>
