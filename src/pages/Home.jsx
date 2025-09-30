@@ -1,12 +1,7 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import { Container, Row, Col, Button, Card, Badge } from "react-bootstrap";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  FiCalendar,
-  FiMapPin,
-  FiExternalLink,
-  FiPlay,
-} from "react-icons/fi";
+import { FiCalendar, FiMapPin, FiExternalLink, FiPlay } from "react-icons/fi";
 import {
   FaFacebookF,
   FaInstagram,
@@ -14,13 +9,12 @@ import {
   FaTiktok,
   FaQuoteLeft,
 } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 /* =========================================================
-   HOME ULTRA-SPETTACOLARE (React-Bootstrap + Framer Motion)
-   Effetti: Parallax multi-layer, spotlight dinamico (fix),
-            orbs fluttuanti, titolo cinetico, CTA glow,
-            card 3D tilt, marquee recensioni, sezione WhatsApp.
-   Nessuna libreria extra.
+   HOME (pulita): rimosse ORBS + video hero anche su mobile in HD
+   - Video unico <video> (desktop+mobile) con playsInline/muted/loop
+   - Mantiene spotlight e titolo cinetico
    ========================================================= */
 
 /* ---------- Utility ---------- */
@@ -66,28 +60,18 @@ function SocialBtn({ href, label, children }) {
       }
       onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
     >
-      <span style={{ fontSize: 18, display: "inline-flex" }}>{children}</span>
+      {/* lineHeight:0 elimina lo spazio di baseline; translateY(+0.5px) corregge l’ottica */}
+      <span
+        style={{
+          fontSize: 18,
+          lineHeight: 0,
+          display: "inline-flex",
+          transform: "translateY(0.5px)",
+        }}
+      >
+        {children}
+      </span>
     </a>
-  );
-}
-
-function OrbField() {
-  // elementi decorativi animati via CSS keyframes
-  return (
-    <>
-      <div className="orb orb-1" />
-      <div className="orb orb-2" />
-      <div className="orb orb-3" />
-      <style>{`
-        .orb{position:absolute;border-radius:9999px;filter:blur(22px);opacity:.25;mix-blend:screen;}
-        .orb-1{width:260px;height:260px;left:8%;top:12%;background:radial-gradient(circle,#ff5ea8,#8b1cfb);animation:float1 18s ease-in-out infinite;}
-        .orb-2{width:320px;height:320px;right:10%;top:22%;background:radial-gradient(circle,#39e6ff,#3b82f6);animation:float2 22s ease-in-out infinite;}
-        .orb-3{width:220px;height:220px;left:14%;bottom:8%;background:radial-gradient(circle,#22c55e,#a3e635);animation:float3 20s ease-in-out infinite;}
-        @keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,-24px)}}
-        @keyframes float2{0%,100%{transform:translate(0,0)}50%{transform:translate(-36px,18px)}}
-        @keyframes float3{0%,100%{transform:translate(0,0)}50%{transform:translate(28px,28px)}}
-      `}</style>
-    </>
   );
 }
 
@@ -120,8 +104,6 @@ function KineticTitle({ text }) {
   );
 }
 
-
-
 function TiltCard({ children }) {
   const ref = useRef(null);
   const [r, setR] = useState({ rx: 0, ry: 0 });
@@ -150,9 +132,10 @@ export default function Home() {
     () => [
       {
         title: "Le voci di dentro",
-        excerpt: "Il capolavoro di De Filippo...",
+        excerpt:
+          "Commedia di Eduardo De Filippo che intreccia sogno e realtà: un presunto omicidio scatena sospetti e rivelazioni nella Napoli del dopoguerra, tra ironia e tensione morale.",
         whenISO: "2025-10-03T20:45:00+02:00",
-        monthLabel: "Ottobre", // <<< mostra solo il mese
+        monthLabel: "Ottobre",
         venue: "Teatro La Locandina",
         city: "Pagani (SA)",
         status: "In Scena",
@@ -161,9 +144,10 @@ export default function Home() {
       },
       {
         title: "Il medico dei pazzi",
-        excerpt: "La celebre commedia di Scarpetta...",
+        excerpt:
+          "Capolavoro comico di Eduardo Scarpetta: Felice Sciosciammocca, ignaro, scambia una casa di cura per una pensione e dà vita a una valanga di equivoci irresistibili.",
         whenISO: "2025-12-06T21:00:00+01:00",
-        monthLabel: "Dicembre", // <<< solo mese
+        monthLabel: "Dicembre",
         venue: "Teatro La Locandina",
         city: "Pagani (SA)",
         status: "In programmazione",
@@ -172,9 +156,10 @@ export default function Home() {
       },
       {
         title: "Romeo e Giulietta",
-        excerpt: "Il dramma senza tempo di Shakespeare...",
+        excerpt:
+          "Il dramma senza tempo di Shakespeare: l’amore travolgente di due giovani sfida l’odio tra Montecchi e Capuleti in una Verona divisa e tragica.",
         whenISO: "2026-02-07T21:00:00+01:00",
-        monthLabel: "Febbraio", // <<< solo mese
+        monthLabel: "Febbraio",
         venue: "Teatro La Locandina",
         city: "Pagani (SA)",
         status: "In programmazione",
@@ -185,88 +170,27 @@ export default function Home() {
     []
   );
 
-  const quotes = [
-  {
-    text: "Il teatro dove la magia incontra l'anima.",
-    author: "Sipario Aperto",
-  },
-  {
-    text: "La scena si illumina quando il pubblico trattiene il respiro.",
-    author: "Critica di Spettacolo",
-  },
-  {
-    text: "Passione, mestiere, territorio: la compagnia che emoziona.",
-    author: "Spettatore",
-  },
-  {
-    text: "Una serata di risate genuine e cuore napoletano: indimenticabile.",
-    author: "Spettatore entusiasta",
-  },
-  {
-    text: "Ogni battuta è un tuffo nelle radici della nostra tradizione, con una freschezza che conquista.",
-    author: "Appassionato di commedie",
-  },
-  {
-    text: "La tragedia annuale è un pugno nell’anima, recitata con una forza e una verità che commuovono.",
-    author: "Amante del dramma",
-  },
-  {
-    text: "Il ritmo comico e l’energia degli attori mi hanno fatto dimenticare il tempo.",
-    author: "Spettatore rapito",
-  },
-  {
-    text: "Un viaggio a Napoli senza muoversi da Pagani: profumi, colori e risate di casa.",
-    author: "Fan della tradizione",
-  },
-  {
-    text: "La loro tragedia è poesia in movimento, intensità pura che resta nel cuore.",
-    author: "Critico locale",
-  },
-  {
-    text: "Comicità raffinata e spontanea, capace di far ridere e riflettere nello stesso momento.",
-    author: "Spettatore affezionato",
-  },
-  {
-    text: "Quando cala il sipario resta la sensazione di aver vissuto un pezzo di Napoli autentica.",
-    author: "Ospite della serata",
-  },
-  {
-    text: "Bravura, ritmo, cuore: questa compagnia sa come rapire il pubblico dalla prima battuta.",
-    author: "Amico del teatro",
-  },
-  {
-    text: "Una tempesta di emozioni: dalle risate fragorose alle lacrime sincere.",
-    author: "Teatrofilo anonimo",
-  },
-  {
-    text: "Ogni spettacolo è una festa di dialetti, musica e calore partenopeo.",
-    author: "Spettatrice felice",
-  },
-  {
-    text: "La tragedia annuale è il loro diamante: intensità e arte allo stato puro.",
-    author: "Appassionata di classici",
-  },
-  {
-    text: "Recitazione brillante e scenografie curate: un’esperienza che resta nella memoria.",
-    author: "Visitatore entusiasta",
-  },
-  {
-    text: "Ogni risata è un abbraccio, ogni lacrima una carezza: teatro che nutre l’anima.",
-    author: "Cuore di spettatore",
-  },
-  {
-    text: "Quando il sipario si apre, Napoli entra in sala con tutta la sua magia.",
-    author: "Fan devoto",
-  },
-  {
-    text: "Commedie che scaldano, tragedie che scuotono: una compagnia che sa fare tutto.",
-    author: "Critico appassionato",
-  },
-  {
-    text: "Ridere, piangere, sognare: in poche ore ti fanno vivere una vita intera.",
-    author: "Spettatore incantato",
-  },
-];
+  const quotes = useMemo(
+    () => [
+      {
+        text: "Il teatro dove la magia incontra l'anima.",
+        author: "Sipario Aperto",
+      },
+      {
+        text: "La scena si illumina quando il pubblico trattiene il respiro.",
+        author: "Critica di Spettacolo",
+      },
+      {
+        text: "Passione, mestiere, territorio: la compagnia che emoziona.",
+        author: "Spettatore",
+      },
+      {
+        text: "Una serata di risate genuine e cuore napoletano: indimenticabile.",
+        author: "Spettatore entusiasta",
+      },
+    ],
+    []
+  );
 
   const [qIndex, setQIndex] = useState(0);
   useEffect(() => {
@@ -275,32 +199,28 @@ export default function Home() {
       4200
     );
     return () => clearInterval(id);
-  }, []);
+  }, [quotes.length]);
 
-  // Spotlight dinamico: coord relative all'hero per evitare sfasamenti con scroll/parallax
+  // Spotlight dinamico (coord relative all'hero)
   useEffect(() => {
     const layer = document.getElementById("spotlightLayer");
     const hero = document.getElementById("hero");
     if (!layer || !hero) return;
-
     const onMove = (e) => {
       const rect = hero.getBoundingClientRect();
-      const x = e.clientX - rect.left; // coord relative all'hero
+      const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
       layer.style.setProperty("--x", `${x}px`);
       layer.style.setProperty("--y", `${y}px`);
     };
-
     const center = () => {
       const rect = hero.getBoundingClientRect();
       layer.style.setProperty("--x", `${rect.width / 2}px`);
       layer.style.setProperty("--y", `${rect.height * 0.45}px`);
     };
-
     hero.addEventListener("pointermove", onMove);
     hero.addEventListener("pointerleave", center);
     center();
-
     return () => {
       hero.removeEventListener("pointermove", onMove);
       hero.removeEventListener("pointerleave", center);
@@ -314,7 +234,7 @@ export default function Home() {
 
   return (
     <>
-      {/* ====== HERO ULTRA ====== */}
+      {/* ====== HERO ====== */}
       <section
         id="hero"
         className="position-relative"
@@ -323,41 +243,25 @@ export default function Home() {
           background: "#000",
           color: "#fff",
           overflow: "hidden",
-          paddingTop: "72px",
         }}
       >
-        {/* strati parallax */}
+        {/* Background video unico (desktop + mobile) */}
         <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
-            <video
-              className="d-none d-md-block w-100 h-100"
-              style={{
-                objectFit: "cover",
-                opacity: 0.6,
-                pointerEvents: "none",
-              }}
-              autoPlay
-              muted
-              loop
-              playsInline
-              poster="/hero-img.png"
-            >
-              <source src="/hero.mp4" type="video/mp4" />
-            </video>
-            <img
-              src="/hero-img.png"
-              alt="Compagnia in scena"
-              className="d-md-none w-100 h-100"
-              style={{
-                objectFit: "cover",
-                opacity: 0.85,
-                pointerEvents: "none",
-              }}
-              onError={(e) =>
-                (e.currentTarget.src =
-                  "https://picsum.photos/1920/1080?random=80")
-              }
-            />
-            <OrbField />
+          <video
+            className="w-100 h-100"
+            style={{ objectFit: "cover", opacity: 0.6, pointerEvents: "none" }}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster="/hero-img.png"
+          >
+            {/* Se hai una versione 1080p specifica, mettila COME PRIMA SOURCE */}
+            <source src="/hero-1080p.mp4" type="video/mp4" />
+            <source src="/hero.mp4" type="video/mp4" />
+          </video>
+          {/* Gradient overlay + spotlight */}
           <div
             style={{
               position: "absolute",
@@ -390,71 +294,55 @@ export default function Home() {
               contemporaneo in un dialogo vivo con il pubblico.
             </motion.p>
 
+            {/* CTA + Social allineati otticamente */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.35, duration: 0.8 }}
-              className="mt-4 d-grid gap-2 d-sm-flex justify-content-center"
+              className="mt-3 mx-auto d-flex flex-column align-items-center"
+              style={{ width: "fit-content" }}
             >
               <Button
+                as={Link}
+                to="/calendario"
                 size="lg"
                 variant="light"
-                className="me-sm-3 w-100 w-sm-auto position-relative"
-                onClick={() => scrollToId("chi-siamo")}
+                className="w-auto position-relative mb-3"
               >
                 <span className="position-relative" style={{ zIndex: 2 }}>
-                  Scopri chi siamo
+                  Vai alla programmazione
                 </span>
                 <span
                   className="position-absolute top-0 start-0 w-100 h-100"
                   style={{
                     borderRadius: 999,
                     boxShadow:
-                      "0 0 0 2px #fff inset, 0 0 38px rgba(255,255,255,.45)",
+                      "0 0 0 1px #fff inset, 0 0 20px rgba(255,255,255,.35)",
                   }}
                 />
               </Button>
-              <Button
-                size="lg"
-                variant="outline-light"
-                className="w-100 w-sm-auto"
-                onClick={() => scrollToId("eventi")}
-              >
-                Programmazione
-              </Button>
-              <a
-                href="/video"
-                className="btn btn-outline-light w-100 w-sm-auto d-inline-flex align-items-center gap-2"
-              >
-                <FiPlay /> Video
-              </a>
-            </motion.div>
 
-            {/* Social */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-              className="mt-4 d-flex justify-content-center gap-3"
-            >
-              <SocialBtn
-                href="https://www.facebook.com/profile.php?id=61580420651607"
-                label="Facebook"
-              >
-                <FaFacebookF />
-              </SocialBtn>
-              <SocialBtn
-                href="https://www.instagram.com/siparioaperto_79/"
-                label="Instagram"
-              >
-                <FaInstagram />
-              </SocialBtn>
-              <SocialBtn
-                href="https://www.youtube.com/@sipario_aperto"
-                label="YouTube"
-              >
-                <FaYoutube />
-              </SocialBtn>
+              {/* Social, centrati sullo stesso asse del bottone */}
+              <div className="d-flex justify-content-center gap-3">
+                <SocialBtn
+                  href="https://www.facebook.com/profile.php?id=61580420651607"
+                  label="Facebook"
+                >
+                  <FaFacebookF />
+                </SocialBtn>
+                <SocialBtn
+                  href="https://www.instagram.com/siparioaperto_79/"
+                  label="Instagram"
+                >
+                  <FaInstagram />
+                </SocialBtn>
+                <SocialBtn
+                  href="https://www.youtube.com/@sipario_aperto"
+                  label="YouTube"
+                >
+                  <FaYoutube />
+                </SocialBtn>
+              </div>
             </motion.div>
 
             <div className="mt-3" style={{ minHeight: 28 }}>
@@ -484,7 +372,6 @@ export default function Home() {
               </small>
             </div>
 
-            {/* Scroll cue */}
             <div className="mt-4">
               <div className="scroll-cue" />
             </div>
@@ -522,9 +409,9 @@ export default function Home() {
                 <li>Accessibilità, prezzi popolari, tournée regionali</li>
               </ul>
               <div className="mt-3 d-flex gap-2">
-                <Button variant="light" onClick={() => scrollToId("contatti")}>
-                  Contattaci
-                </Button>
+                <Button as={Link} to="/chi-siamo" variant="light">
+                  Scopri Chi Siamo
+                </Button>{" "}
                 <Button
                   variant="outline-light"
                   onClick={() => scrollToId("eventi")}
@@ -551,7 +438,6 @@ export default function Home() {
                   />
                 </div>
               </TiltCard>
-              
             </Col>
           </Row>
         </Container>
@@ -574,22 +460,14 @@ export default function Home() {
             >
               Prossimi eventi
             </h2>
-            <a
-              href="/calendario"
-              className="text-decoration-none"
-              style={{ color: "rgba(255,255,255,.8)" }}
-            >
-              Calendario completo
-            </a>
           </div>
           <Row>
             {events.map((ev, i) => {
-              // Mostriamo SOLO il mese (nessun giorno/ora)
-              const monthOnly = ev.monthLabel
-                ? ev.monthLabel
-                : new Intl.DateTimeFormat("it-IT", { month: "long" }).format(
-                    new Date(ev.whenISO)
-                  );
+              const monthOnly =
+                ev.monthLabel ||
+                new Intl.DateTimeFormat("it-IT", { month: "long" }).format(
+                  new Date(ev.whenISO)
+                );
               const variant =
                 ev.status === "In programmazione"
                   ? "warning"
@@ -636,7 +514,6 @@ export default function Home() {
                         <div className="d-flex align-items-center gap-2 small mb-1">
                           <FiCalendar /> <small>Nel mese di {monthOnly}</small>
                         </div>
-                        {/* NIENTE orario: riga rimossa come da richiesta */}
                         <div className="d-flex align-items-center gap-2 small mb-3">
                           <FiMapPin />{" "}
                           <small>
@@ -644,16 +521,14 @@ export default function Home() {
                           </small>
                         </div>
                         <div className="d-flex justify-content-between align-items-center">
-                          <Button variant="light" size="sm" href={ev.link}>
+                          <Button
+                            as={Link}
+                            to="/contatti"
+                            variant="light"
+                            size="sm"
+                          >
                             Prenota
                           </Button>
-                          <a
-                            href={ev.link}
-                            className="text-decoration-none small"
-                            style={{ color: "rgba(255,255,255,.85)" }}
-                          >
-                            Dettagli <FiExternalLink />
-                          </a>
                         </div>
                       </Card.Body>
                     </Card>
@@ -666,28 +541,164 @@ export default function Home() {
       </section>
 
       {/* ====== RECENSIONI ====== */}
-<section id="recensioni" className="py-5" style={{background:'linear-gradient(180deg,#0f0f22,#0a0a12)'}}>
-  <Container>
-    <h2 className="text-center text-light mb-4" style={{ fontFamily:"'Playfair Display', serif", fontSize:'clamp(1.6rem,2.6vw,2.2rem)'}}>Dicono di noi</h2>
-
-    <div className="marquee-mask">
-      <motion.div
-        initial={{ x: 0 }}
-        animate={{ x: "-50%" }}
-        transition={{ repeat: Infinity, duration: 90, ease: "linear" }}
-        className="marquee-track"
+      <section
+        id="recensioni"
+        className="py-5"
+        style={{ background: "linear-gradient(180deg,#0f0f22,#0a0a12)" }}
       >
-        {[...quotes, ...quotes].map((q, idx) => (
-          <figure key={idx} className="p-3 p-md-4 rounded"
-            style={{ background:'rgba(255,255,255,.06)', border:'1px solid rgba(255,255,255,.12)', color:'#fff', minWidth:360, maxWidth:460 }}>
-            <blockquote className="mb-2" style={{ fontStyle:'italic' }}>“{q.text}”</blockquote>
-            <figcaption style={{ opacity:.85, fontSize:14 }}>— {q.author}</figcaption>
-          </figure>
-        ))}
-      </motion.div>
-    </div>
-  </Container>
-</section>
+        <Container>
+          <h2
+            className="text-center text-light mb-4"
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontSize: "clamp(1.6rem,2.6vw,2.2rem)",
+            }}
+          >
+            Dicono di noi
+          </h2>
+          <div className="marquee-mask">
+            <motion.div
+              initial={{ x: 0 }}
+              animate={{ x: "-50%" }}
+              transition={{ repeat: Infinity, duration: 90, ease: "linear" }}
+              className="marquee-track"
+            >
+              {[...quotes, ...quotes].map((q, idx) => (
+                <figure
+                  key={idx}
+                  className="p-3 p-md-4 rounded"
+                  style={{
+                    background: "rgba(255,255,255,.06)",
+                    border: "1px solid rgba(255,255,255,.12)",
+                    color: "#fff",
+                    minWidth: 360,
+                    maxWidth: 460,
+                  }}
+                >
+                  <blockquote className="mb-2" style={{ fontStyle: "italic" }}>
+                    “{q.text}”
+                  </blockquote>
+                  <figcaption style={{ opacity: 0.85, fontSize: 14 }}>
+                    — {q.author}
+                  </figcaption>
+                </figure>
+              ))}
+            </motion.div>
+          </div>
+        </Container>
+      </section>
+      {/* ====== VIDEO ====== */}
+      <section id="video" className="position-relative py-5 py-md-6">
+        {/* sfondo video full-bleed con overlay */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 0,
+            overflow: "hidden",
+          }}
+        >
+          <video
+            className="w-100 h-100"
+            style={{
+              objectFit: "cover",
+              filter: "contrast(1.05) brightness(.8)",
+              transform: "scale(1.02)",
+            }}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster="/hero-img.png"
+          >
+            <source src="/cinema.mp4" type="video/mp4" />
+            <source src="/cinema.mp4" type="video/mp4" />
+          </video>
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "radial-gradient(1200px 600px at 50% 10%, rgba(255,255,255,.08), transparent 55%), linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,.80) 85%, #000)",
+            }}
+          />
+        </div>
+
+        <Container style={{ position: "relative", zIndex: 1 }}>
+          <Row className="align-items-center">
+            <Col lg={{ span: 10, offset: 1 }} className="text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.8 }}
+                className="d-inline-flex flex-column align-items-center gap-3"
+              >
+                <Link to="/video">
+  <motion.button
+    className="d-inline-flex align-items-center justify-content-center"
+    style={{
+      width: 96,
+      height: 96,
+      borderRadius: 999,
+      border: "1px solid rgba(255,255,255,.35)",
+      background: "rgba(255,255,255,.08)",
+      boxShadow:
+        "0 12px 40px rgba(0,0,0,.45), inset 0 0 22px rgba(255,255,255,.10)",
+      cursor: "pointer",
+    }}
+    whileHover={{ scale: 1.06 }}
+    whileTap={{ scale: 0.98 }}
+  >
+    <FiPlay size={40} />
+  </motion.button>
+</Link>
+
+
+                <h2
+                  className="text-light m-0"
+                  style={{
+                    fontFamily: "'Playfair Display', serif",
+                    fontWeight: 900,
+                    fontSize: "clamp(1.8rem,3.5vw,2.6rem)",
+                    textShadow: "0 12px 40px rgba(0,0,0,.65)",
+                  }}
+                >
+                  Guarda il nostro mondo in scena
+                </h2>
+                <p
+                  className="text-light"
+                  style={{ opacity: 0.9, maxWidth: 820 }}
+                >
+                  Trailer, backstage e momenti dal vivo: emozioni in alta
+                  definizione.
+                </p>
+
+                <div className="d-grid gap-2 d-sm-flex">
+                  <Button
+                    as={Link}
+                    to="/video"
+                    size="lg"
+                    variant="light"
+                    className="position-relative"
+                  >
+                    Vai alla pagina Video
+                    <span
+                      className="position-absolute top-0 start-0 w-100 h-100"
+                      style={{
+                        borderRadius: 999,
+                        boxShadow:
+                          "0 0 0 1px #fff inset, 0 0 24px rgba(255,255,255,.35)",
+                      }}
+                    />
+                  </Button>
+                </div>
+              </motion.div>
+            </Col>
+          </Row>
+        </Container>
+      </section>
 
       {/* ====== UNISCITI (WhatsApp) ====== */}
       <section
@@ -722,23 +733,20 @@ export default function Home() {
                   Apri Gruppo WhatsApp
                 </a>
                 <Button
-  as="a"
-  href="/contatti"
+  as={Link}          //  <── usa Link
+  to="/contatti"     //  <── rotta interna
   variant="outline-light"
   size="lg"
 >
   Contattaci
 </Button>
-
               </div>
               <div
                 className="text-light mt-2"
                 style={{ opacity: 0.8, fontSize: 14 }}
               >
-                
-
-📢 Segui il nostro gruppo ufficiale su WhatsApp per ricevere notizie e anteprime.
-
+                📢 Segui il nostro gruppo ufficiale su WhatsApp per ricevere
+                notizie e anteprime.
               </div>
             </Col>
             <Col lg={6} className="text-center">
@@ -773,35 +781,27 @@ export default function Home() {
         </Container>
       </section>
 
-      {/* Inline helpers + Spotlight CSS */}
+      {/* Helpers + Spotlight CSS */}
       <style>{`
-        .ratio-3x4{position:relative; width:100%;}
-        .ratio-3x4::before{content:''; display:block; padding-bottom:133.333%;}
-        .ratio-3x4>*{position:absolute; inset:0}
-/* Blocca definitivamente la scroll-bar orizzontale della pagina */
 html, body { overflow-x: hidden; }
-
-/* Maschera la marquee (niente sbordi laterali) */
-.marquee-mask { 
-  overflow: hidden; 
-  position: relative; 
-  width: 100%;
-}
-
-/* Il nastro scorrevole si misura da solo (no width:200%) */
-.marquee-track {
+.marquee-mask{ overflow:hidden; position:relative; width:100%; }
+.marquee-track{ display:flex; gap:16px; width:max-content; }
+/* Spotlight */
+.spotlight{ position:absolute; inset:0; pointer-events:none; background: radial-gradient(340px 340px at var(--x, 50%) var(--y, 45%), rgba(255,255,255,0.10), transparent 70%); transition:60ms; }
+@media (max-width:768px){ .spotlight{ background: radial-gradient(260px 260px at 50% 45%, rgba(255,255,255,0.10), transparent 70%); } }
+.hero-actions {
   display: flex;
-  gap: 16px;
-  width: max-content;   /* <-- evita di allargare il layout */
+  flex-direction: column;
+  align-items: center;
 }
+.hero-actions > .btn {
+  margin-bottom: 0.75rem; /* spaziatura minore */
+}
+  /* Effetto leggero di glow sugli elementi della sezione video */
+#video h2 { letter-spacing: .3px; }
+#video .btn { backdrop-filter: blur(2px); }
 
-        /* Spotlight: usa variabili px per seguire il mouse dentro l'hero */
-        .spotlight{position:absolute; inset:0; pointer-events:none;
-          background: radial-gradient(340px 340px at var(--x, 50%) var(--y, 45%), rgba(255,255,255,0.10), transparent 70%);
-          transition: 60ms;}
-        @media (max-width: 768px){
-          .spotlight{background: radial-gradient(260px 260px at 50% 45%, rgba(255,255,255,0.10), transparent 70%);}
-        }
+
       `}</style>
     </>
   );

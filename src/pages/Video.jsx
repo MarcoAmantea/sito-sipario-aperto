@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Container, Row, Col, Button, Card, Form, Modal, Badge } from "react-bootstrap";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiPlay, FiSearch } from "react-icons/fi";
+import { useConsent } from "../components/ConsentContext";
 
 /* =========================================================
    VIDEO — Griglia spettacolare solo con immagini da /public
@@ -38,7 +39,7 @@ function MediaBox({ src, alt, onPlay }) {
         alt={alt}
         loading="lazy"
         onError={(e) => (e.currentTarget.src = "https://picsum.photos/seed/teatro/800/450?blur=2")}
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", backgroundColor: "#000" }}
       />
       <motion.button
         type="button"
@@ -57,15 +58,63 @@ function MediaBox({ src, alt, onPlay }) {
 }
 
 export default function Video(){
+  const { consent, savePartial } = useConsent();
+
   // === GRIGLIA VIDEO: metti qui le tue cover (percorsi RELATIVI a /public) ===
-  const allVideos = useMemo(() => [
-    { id: "mkhW9tVat0I", title: "Miseria e nobiltà",           tags: ["commedia","napoli"], cover: "covers/miseria.jpg" },
-    { id: "ZaDeyMztD34", title: "La Commedia del Re Buffone e del Buffone Re", tags: ["commedia","napoli"], cover: "covers/buffone.jpeg" },
-    { id: "zhD1Ocoef0I", title: "Otello",                      tags: ["tragedia"],           cover: "covers/otello.jpg" },
-    { id: "oo5fCMiUxJ4", title: "Amleto",                      tags: ["tragedia"],           cover: "covers/amleto.jpg" },
-    { id: "Y5spEBX5mNY", title: "Presentazione Rassegna 2024/2025", tags: ["stagione"],     cover: "covers/fallback.jpg" },
-    { id: "IJ0LM3DUwqs", title: "Morte di Carnevale",          tags: ["commedia","napoli"], cover: "covers/carnevale.jpg" },
-  ], []);
+  // === GRIGLIA VIDEO: metti qui le tue cover (percorsi RELATIVI a /public) ===
+const allVideos = useMemo(() => [
+  {
+    id: "mkhW9tVat0I",
+    title: "Miseria e nobiltà",
+    cover: "covers/miseria.jpg",
+    tags: ["commedia","napoli"],
+    description:
+      "La celebre commedia di Eduardo Scarpetta che racconta, tra equivoci e risate, l’incontro tra la miseria dei popolani e le vanità della nobiltà partenopea."
+  },
+  {
+    id: "ZaDeyMztD34",
+    title: "La Commedia del Re Buffone e del Buffone Re",
+    cover: "covers/buffone.jpeg",
+    tags: ["commedia","napoli"],
+    description:
+      "Un gioco teatrale irresistibile in cui il re diventa buffone e il buffone diventa re: satira pungente, ritmo incalzante e un continuo scambio di ruoli che diverte e fa riflettere."
+  },
+  {
+    id: "zhD1Ocoef0I",
+    title: "Otello",
+    cover: "covers/otello.jpg",
+    tags: ["tragedia"],
+    description:
+      "La grande tragedia di Shakespeare: gelosia, inganno e amore fatale in una messa in scena intensa e visivamente potente."
+  },
+  {
+    id: "oo5fCMiUxJ4",
+    title: "Amleto",
+    cover: "covers/amleto.jpg",
+    tags: ["tragedia"],
+    description:
+      "Il principe di Danimarca in una versione moderna ma fedele: dubbi, vendetta e il tormento della coscienza, tra atmosfere cupe e monologhi immortali."
+  },
+  {
+    id: "Y5spEBX5mNY",
+    title: "Presentazione Rassegna 2024/2025",
+    cover: "covers/fallback.jpg",
+    tags: ["stagione"],
+    description:
+      "Uno sguardo esclusivo alla nuova stagione teatrale di Sipario Aperto: anteprime, dietro le quinte e interviste al cast."
+  },
+ {
+  id: "IJ0LM3DUwqs",
+  title: "Morte di Carnevale",
+  cover: "covers/carnevale.jpg",
+  tags: ["commedia","napoli","viviani"],
+  description:
+    "Commedia di Raffaele Viviani: Pasquale Capozzi, detto Carnevale, finge la propria morte scatenando intrighi ed eredità inattese nella Napoli popolare degli anni ’20."
+}
+
+
+], []);
+
 
   // === Stato ricerca e filtro ===
   const [query, setQuery] = useState("");
@@ -88,7 +137,7 @@ export default function Video(){
     <main style={{ background: "linear-gradient(180deg,#000,#0b0b12)" }}>
 
       {/* HERO immagine */}
-<section className="position-relative" style={{ minHeight: "64vh", overflow: "hidden", paddingTop: 72 }}>
+<section className="position-relative" style={{ minHeight: "58vh", overflow: "hidden", paddingTop: 72 }}>
   <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
     <img src={pub("video.png")} alt="Video Sipario Aperto" className="w-100 h-100" style={{ objectFit: "cover", opacity: .58 }} onError={(e)=>e.currentTarget.src = "https://picsum.photos/1600/900?blur=2"} />
     <div style={{ position: "absolute", inset: 0, background: "radial-gradient(140% 80% at 50% 20%, rgba(255,255,255,.08), rgba(0,0,0,.86))" }} />
@@ -103,7 +152,7 @@ export default function Video(){
       </motion.p>
       <div className="d-flex justify-content-center gap-2 mt-3 hero-cta">
         <Button size="lg" variant="light" as="a" href={CHANNEL_URL} target="_blank" rel="noreferrer">
-          Iscriviti al canale
+          Iscriviti al canale Youtube
         </Button>
         <Button size="lg" variant="outline-light" onClick={() => play(allVideos[0])}>
           Guarda lo spettacolo in primo piano
@@ -142,11 +191,17 @@ export default function Video(){
                   <Card className="h-100 shadow-sm" style={{ background: "rgba(255,255,255,.05)", color: "#fff", border: "1px solid rgba(255,255,255,.12)" }}>
                     <MediaBox src={v.cover} alt={v.title} onPlay={() => play(v)} />
                     <Card.Body>
-                      <Card.Title className="mb-1" style={{ fontSize: "1rem" }}>{v.title}</Card.Title>
-                      <div className="d-flex gap-1 flex-wrap">
-                        {v.tags?.map(tag => (<Badge key={tag} bg="secondary">{tag}</Badge>))}
-                      </div>
-                    </Card.Body>
+  <Card.Title className="mb-1" style={{ fontSize: "1rem" }}>
+    {v.title}
+  </Card.Title>
+  <Card.Text style={{ fontSize: ".9rem", opacity: .85 }}>
+    {v.description}
+  </Card.Text>
+  <div className="d-flex gap-1 flex-wrap">
+    {v.tags?.map(tag => (<Badge key={tag} bg="secondary">{tag}</Badge>))}
+  </div>
+</Card.Body>
+
                   </Card>
                 </motion.div>
               </Col>
@@ -164,18 +219,38 @@ export default function Video(){
           <Modal show onHide={close} centered size="lg" contentClassName="bg-dark text-light" backdropClassName="backdrop-blur">
             <Modal.Header closeButton closeVariant="white"><Modal.Title>{current?.title || "Video"}</Modal.Title></Modal.Header>
             <Modal.Body>
-              <div className="position-relative" style={{ paddingBottom: "56.25%" }}>
-                {current && (
-                  <iframe
-                    src={`https://www.youtube.com/embed/${current.id}?autoplay=1&rel=0`}
-                    title={current.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                    style={{ position:'absolute', inset:0, width:'100%', height:'100%', border: 0 }}
-                  />
-                )}
-              </div>
-            </Modal.Body>
+  <div className="position-relative" style={{ paddingBottom: "56.25%" }}>
+    {!consent.youtube ? (
+      <div style={{
+        position:'absolute', inset:0, display:'grid', placeItems:'center',
+        background:'linear-gradient(180deg,#0b0b12,#12121a)',
+        border:'1px solid rgba(255,255,255,.12)'
+      }}>
+        <div className="text-center px-3">
+          <p className="mb-3" style={{ opacity:.9 }}>
+            Per riprodurre il video abilita i cookie di YouTube (terze parti).
+          </p>
+          <button
+            className="btn btn-light"
+            onClick={() => savePartial({ youtube: true })}
+          >
+            Abilita e riproduci
+          </button>
+        </div>
+      </div>
+    ) : (
+      current && (
+        <iframe
+          src={`https://www.youtube.com/embed/${current.id}?autoplay=1&rel=0`}
+          title={current.title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          style={{ position:'absolute', inset:0, width:'100%', height:'100%', border:0 }}
+        />
+    ))}
+  </div>
+</Modal.Body>
+
           </Modal>
         )}
       </AnimatePresence>

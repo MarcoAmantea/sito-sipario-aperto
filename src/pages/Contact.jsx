@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { Container, Row, Col, Card, Button, Form, Alert, Badge } from "react-bootstrap";
 import { motion } from "framer-motion";
 import { FiPhone, FiMail, FiMapPin, FiSend, FiUser, FiMessageCircle } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 /* =========================================================
    CONTATTI — Pagina premium e dinamica
@@ -19,14 +20,16 @@ const pub = (p) => {
   return base + rel;
 };
 
-const CONTACT_EMAIL = "siparioapertoteatro@gmail.com"; // 👈 Sostituisci con la tua email (FormSubmit)
+const CONTACT_EMAIL = "marcoamantea18@gmail.com"; // 👈 Sostituisci con la tua email (FormSubmit)
 
 export default function Contacts(){
+  const navigate = useNavigate();
+
   const people = useMemo(() => ([
     { name: "Carmine De Pascale", role: "Direttore artistico", phone: "+39 338 300 9575", photo: "people/direttore.jpg" },
-    { name: "Valeria De Pascale", role: "Organizzazione", phone: "+39 349 691 8030", photo: "people/valeria.png" },
-    { name: "Alessandro De Pascale", role: "Regista e Organizzazione", phone: "+39 345 816 9825", photo: "people/alessandro.jpg" },
-    { name: "Maria Rosaria Argentino", role: "Organizzazione", phone: "+39 333 239 7228", photo: "people/rosaria.png" },
+    { name: "Valeria De Pascale", role: "Attrice, Organizzazione", phone: "+39 349 691 8030", photo: "people/valeria.png" },
+    { name: "Alessandro De Pascale", role: "Regista, Attore", phone: "+39 345 816 9825", photo: "people/alessandro.jpg" },
+    { name: "Maria Rosaria Argentino", role: "Attrice, Organizzazione", phone: "+39 333 239 7228", photo: "people/rosaria.png" },
     { name: "Marco Amantea", role: "Attore, Web & Digital", phone: "+39 340 706 6819", photo: "people/marco.png" },
   ]), []);
 
@@ -34,18 +37,43 @@ export default function Contacts(){
   const [sending, setSending] = useState(false);
   const [ok, setOk] = useState(false);
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
+    e.preventDefault();                          // niente reload
     const form = e.currentTarget;
+
     if (!form.checkValidity()) {
-      e.preventDefault();
       e.stopPropagation();
       setValidated(true);
       return;
     }
-    setValidated(true);
+
     setSending(true);
-    // lasciamo che FormSubmit gestisca il POST
-    // (rimuovi e usa fetch per API tua se preferisci)
+    try {
+      const data = new FormData(form);
+      // Opzioni FormSubmit (spostate qui al posto degli <input type="hidden">)
+      data.append("_captcha", "false");
+      data.append("_subject", "Nuovo messaggio dal sito Sipario Aperto");
+      data.append("_template", "table");
+
+      const res = await fetch(`https://formsubmit.co/ajax/${CONTACT_EMAIL}`, {
+        method: "POST",
+        body: data,
+        headers: { Accept: "application/json" },
+      });
+      if (!res.ok) throw new Error("Invio fallito");
+
+      form.reset();
+      setValidated(false);
+      setOk(true);
+
+      // Redirect SPA: niente giro esterno → musica/sipario restano
+      navigate("/grazie", { replace: true, state: { from: "contact" } });
+    } catch (err) {
+      alert("Si è verificato un errore durante l’invio. Riprova più tardi.");
+      console.error(err);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -74,10 +102,16 @@ export default function Contacts(){
       <section id="team" className="py-5" style={{ background: "linear-gradient(180deg,#0b0b12,#0f0f22)" }}>
         <Container>
           <h2 className="text-light text-center mb-4" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(1.6rem,2.6vw,2.2rem)" }}>Contatti diretti</h2>
-          <Row className="g-3 g-md-4">
+          <Row className="g-4 justify-content-center">
             {people.map((p, i) => (
-              <Col sm={6} lg={4} key={i}>
-                <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .4 }} transition={{ duration: .45, delay: i * .04 }}>
+              <Col key={i} xs={12} sm={6} md={4} lg={3} className="d-flex">
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.45, delay: i * 0.04 }}
+                  className="flex-fill"
+                >
                   <Card className="h-100 shadow-sm" style={{ background: "rgba(255,255,255,.05)", color: "#fff", border: "1px solid rgba(255,255,255,.12)" }}>
                     <div className="p-4 d-flex flex-column align-items-center text-center">
                       <div className="avatar-wrap mb-3">
@@ -107,10 +141,10 @@ export default function Contacts(){
               <Card style={{ background: "rgba(255,255,255,.05)", color: "#fff", border: "1px solid rgba(255,255,255,.12)" }} className="h-100">
                 <Card.Body>
                   <h4 className="mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>La nostra sede</h4>
-                  <p style={{ opacity: .9 }}>Via Tommaso Cauciello 31 — Teatro La Locandina, 84016 Pagani (SA)</p>
-                  <div className="d-flex align-items-center gap-2 mb-1"><FiMapPin/> <a className="text-decoration-none" style={{ color: '#fff' }} href="https://maps.google.com/?q=Via+Tommaso+Cauciello+31,+Pagani+SA" target="_blank" rel="noreferrer">Indicazioni su Google Maps</a></div>
+                  <p style={{ opacity: .9 }}>Via Tommaso Cauciello 18 — Teatro La Locandina, 84016 Pagani (SA)</p>
+                  <div className="d-flex align-items-center gap-2 mb-1"><FiMapPin/> <a className="text-decoration-none" style={{ color: '#fff' }} href="https://maps.google.com/?q=Via+Tommaso+Cauciello+18,+Pagani+SA" target="_blank" rel="noreferrer">Indicazioni su Google Maps</a></div>
                   <div className="ratio ratio-16x9 rounded overflow-hidden mt-3" style={{ border: '1px solid rgba(255,255,255,.12)' }}>
-                    <iframe title="Mappa" src="https://www.google.com/maps?q=Via%20Tommaso%20Cauciello%2031%20Pagani&output=embed" style={{ border: 0 }} loading="lazy" />
+                    <iframe title="Mappa" src="https://www.google.com/maps?q=Via%20Tommaso%20Cauciello%2018%20Pagani&output=embed" style={{ border: 0 }} loading="lazy" />
                   </div>
                 </Card.Body>
               </Card>
@@ -121,13 +155,8 @@ export default function Contacts(){
                   <h4 className="mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Scrivici</h4>
                   <p style={{ opacity: .9 }}>Ti rispondiamo al più presto. I campi con * sono obbligatori.</p>
 
-                  {/* FORM: usa FormSubmit (sostituisci CONTACT_EMAIL con la tua mail) */}
-                  <Form action={`https://formsubmit.co/${CONTACT_EMAIL}`} method="POST" noValidate validated={validated} onSubmit={onSubmit}>
-                    {/* Opzioni FormSubmit */}
-                    <input type="hidden" name="_captcha" value="false" />
-                    <input type="hidden" name="_subject" value="Nuovo messaggio dal sito Sipario Aperto" />
-                    <input type="hidden" name="_template" value="table" />
-                    <input type="hidden" name="_next" value={typeof window !== 'undefined' ? window.location.origin + '/grazie' : '/grazie'} />
+                  {/* FORM: FormSubmit via AJAX (niente action/_next) */}
+                  <Form noValidate validated={validated} onSubmit={onSubmit}>
                     {/* Honeypot anti-spam */}
                     <div style={{ position:'absolute', left:'-5000px' }} aria-hidden="true">
                       <input type="text" name="_honey" tabIndex={-1} autoComplete="off" />
@@ -167,13 +196,26 @@ export default function Contacts(){
                           <Form.Control as="textarea" rows={5} name="Messaggio" required placeholder="Come possiamo aiutarti?"/>
                           <Form.Control.Feedback type="invalid">Scrivi il tuo messaggio</Form.Control.Feedback>
                         </Form.Group>
+                        <Form.Group className="mb-3">
+                          <Form.Check
+                            required
+                            name="privacy"
+                            id="privacy-check"
+                            label={
+                              <span>
+                                Ho letto e accetto la 
+                                Privacy &amp; Cookie Policy
+                              </span>
+                            }
+                          />
+                        </Form.Group>
                       </Col>
                     </Row>
 
                     <div className="d-grid d-sm-flex gap-2 justify-content-sm-end mt-2">
-                      <Button type="submit" variant="light" size="lg" disabled={sending} className="d-inline-flex align-items-center gap-2">
-                        <FiSend/> Invia
-                      </Button>
+                      <button type="submit" className="btn btn-light cta" disabled={sending}>
+                        {sending ? "Invio..." : "Invia"}
+                      </button>
                       <Button type="reset" variant="outline-light" size="lg">Annulla</Button>
                     </div>
                   </Form>

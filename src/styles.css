@@ -6,3 +6,34 @@ html, body, #root { height: 100%; background: #000; }
 @keyframes cue { 0%{transform:translateY(0);opacity:1} 70%{opacity:1} 100%{transform:translateY(42px);opacity:0} }
 .marquee-mask { -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent); mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent); }
 .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+/* Masonry responsive con colonne CSS */
+.masonry {
+  column-count: 1;
+  column-gap: 1rem;
+}
+@media (min-width: 576px) {
+  .masonry { column-count: 2; }
+}
+@media (min-width: 992px) {
+  .masonry { column-count: 3; }
+}
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+}
+/* Pulsazione morbida (opzionale, riutilizzabile) */
+@keyframes softPulse {
+  0%   { transform: scale(1);   opacity: .9; }
+  50%  { transform: scale(1.02); opacity: 1; }
+  100% { transform: scale(1);   opacity: .9; }
+}
+/* Nascondi la barra volume su schermi piccoli */
+@media (max-width: 576px) {
+  .mini-audio .volume-slider { display: none; }
+}
+/* Assicura che l'underline non “tagli” il layout */
+.navlink-anim {
+  overflow: visible;
+}
+
+
